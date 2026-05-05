@@ -98,6 +98,7 @@ module tile_growth_simulator(
         .lv8, .lv12, .lv15
     );
 
+    /*
     logic [255:0][23:0] frame;
  
     always_comb begin
@@ -118,6 +119,29 @@ module tile_growth_simulator(
                 endcase
             end 
         end
+    end
+    */
+
+    logic [7:0] led_idx;
+    logic [23:0] pixel_out;
+
+    always_comb begin
+        int row;
+        int col;
+        row = int'(led_idx) / 16;
+        col = ((row % 2) == 1) ? (15 - (int'(led_idx) % 16)) : (int'(led_idx) % 16);
+        if((int'(cursor_row) == row) && (int'(cursor_col) == col) && !game_start) begin
+            pixel_out = 24'h15_00_00;
+        end
+        else begin
+            case ({gridh[row][col], gridl[row][col]})
+                2'b00:   pixel_out = 24'h03_03_03; // white
+                2'b01:   pixel_out = 24'h00_00_15; // blue
+                2'b10:   pixel_out = 24'h00_15_00; // red
+                2'b11:   pixel_out = 24'h15_00_00; // green
+                default: pixel_out = 24'h00_00_00;
+            endcase
+        end 
     end
     
 
@@ -146,7 +170,9 @@ module tile_growth_simulator(
     ws2812b_driver u_drv (
         .clock,
         .reset_n,
-        .pixel_matrix(frame),
+        //.pixel_matrix(frame),
+        .pixel_in(pixel_out),
+        .led_idx(led_idx),
         .start(led_start),
         .busy(led_busy),
         .dout(data)
@@ -524,7 +550,9 @@ endmodule : LFSR16
 module ws2812b_driver #(parameter int CLK_MHZ = 25)(
     input  logic clock,
     input  logic reset_n,
-    input  logic [255:0][23:0] pixel_matrix,  
+    //input  logic [255:0][23:0] pixel_matrix,  
+    input logic [23:0] pixel_in,
+    input logic [7:0] led_idx,
     input  logic start,
     output logic busy,
     output logic dout
@@ -595,8 +623,10 @@ module ws2812b_driver #(parameter int CLK_MHZ = 25)(
                     end
                 end
                 LOAD: begin
-                    shift_reg <= pixel_matrix[led_idx];
-                    cur_bit <= pixel_matrix[led_idx][23];  
+                    //shift_reg <= pixel_matrix[led_idx];
+                    shift_reg <= pixel_in;
+                    //cur_bit <= pixel_matrix[led_idx][23];  
+                    cur_bit <= pixel_in[23];
                     cnt <= '0;
                 end
                 SEND_HIGH: begin
