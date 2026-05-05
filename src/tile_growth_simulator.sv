@@ -552,7 +552,7 @@ module ws2812b_driver #(parameter int CLK_MHZ = 25)(
     input  logic reset_n,
     //input  logic [255:0][23:0] pixel_matrix,  
     input logic [23:0] pixel_in,
-    input logic [7:0] led_idx,
+    output logic [7:0] led_idx,
     input  logic start,
     output logic busy,
     output logic dout
@@ -570,7 +570,7 @@ module ws2812b_driver #(parameter int CLK_MHZ = 25)(
  
     logic [CNT_WIDTH-1:0] cnt;
     logic [4:0] bit_idx;   
-    logic [7:0] led_idx;  
+    //logic [7:0] led_idx;  
     logic [23:0] shift_reg; 
     logic cur_bit;   
  
