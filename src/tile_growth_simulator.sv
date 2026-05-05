@@ -152,7 +152,7 @@ module tile_growth_simulator(
         .dout(data)
     );
 
-endmodule : TileGrowth
+endmodule : tile_growth_simulator
 
 
 module PreStartFSM(
