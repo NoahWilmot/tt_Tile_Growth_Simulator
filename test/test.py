@@ -27,23 +27,23 @@ def print_grid(dut, description="default grid"):
     print()
 
 #simulates a button press
-async def press(dut, signal, cycles=1):
+async def press(dut, bit):
     await RisingEdge(dut.clk)
-    signal.value = 1
+    dut.ui_in.value = dut.ui_in.value | (1 << bit)
     await RisingEdge(dut.clk)
     await RisingEdge(dut.clk)
-    signal.value = 0
+    dut.ui_in.value = dut.ui_in.value & ~(1 << bit)
     await RisingEdge(dut.clk)
     await RisingEdge(dut.clk)
 
 #simulates a specific button press
-async def press_up(dut): await press(dut, dut.ui_in[0])
-async def press_down(dut): await press(dut, dut.ui_in[1])
-async def press_left(dut): await press(dut, dut.ui_in[2])
-async def press_right(dut): await press(dut, dut.ui_in[3])
-async def press_color_sel(dut): await press(dut, dut.ui_in[4])
-async def press_place(dut): await press(dut, dut.ui_in[5])
-async def press_start(dut): await press(dut, dut.ui_in[6])
+async def press_up(dut): await press(dut, 0)
+async def press_down(dut): await press(dut, 1)
+async def press_left(dut): await press(dut, 2)
+async def press_right(dut): await press(dut, 3)
+async def press_color_sel(dut): await press(dut, 4)
+async def press_place(dut): await press(dut, 5)
+async def press_start(dut): await press(dut, 6)
 
 #moves the cursor to a specified row and column
 async def move_cursor(dut, target_row, target_col):
