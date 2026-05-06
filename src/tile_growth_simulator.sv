@@ -43,6 +43,46 @@ module tile_growth_simulator(
     logic lfsr_seed_en;
     logic [15:0] lfsr_seed;
 
+    //Input synchronizers
+    logic up_s1, up_s, down_s1, down_s;
+    logic left_s1, left_s, right_s1, right_s;
+    logic cs_s1, cs_s, place_s1, place_s, start_s1, start_s;
+
+    always_ff @(posedge clock, negedge reset_n) begin
+        if(~reset_n) begin
+            up_s1 <= 0; 
+            up_s <= 0;
+            down_s1 <= 0; 
+            down_s <= 0;
+            left_s1 <= 0; 
+            left_s <= 0;
+            right_s1 <= 0;
+            right_s <= 0;
+            cs_s1 <= 0; 
+            cs_s <= 0;
+            place_s1 <= 0; 
+            place_s <= 0;
+            start_s1 <= 0; 
+            start_s <= 0;
+        end
+        else begin
+            up_s1 <= up; 
+            up_s <= up_s1;
+            down_s1 <= down; 
+            down_s <= down_s1;
+            left_s1 <= left; 
+            left_s <= left_s1;
+            right_s1 <= right; 
+            right_s <= right_s1;
+            cs_s1 <= color_sel; 
+            cs_s <= cs_s1;
+            place_s1 <= place;     
+            place_s <= place_s1;
+            start_s1 <= start;     
+            start_s <= start_s1;
+        end
+    end
+
     //write to the Grid
     always_ff @(posedge clock, negedge reset_n) begin
         if(~reset_n) begin
@@ -65,8 +105,8 @@ module tile_growth_simulator(
 
     PreStartFSM pg (
         .clock, .reset_n,
-        .up, .down, .left, .right,
-        .color_sel, .place, .start,
+        .up(up_s), .down(down_s), .left(left_s), .right(right_s),
+        .color_sel(cs_s), .place(place_s), .start(start_s),
         .cursor_row, .cursor_col,
         .game_start,
         .wr_en(pg_wr_en),
@@ -97,30 +137,6 @@ module tile_growth_simulator(
         .lv2, .lv3, .lv5,
         .lv8, .lv12, .lv15
     );
-
-    /*
-    logic [255:0][23:0] frame;
- 
-    always_comb begin
-        for (int i = 0; i < 256; i++) begin
-            int row, col;
-            row = i / 16;
-            col = ((row % 2) == 1) ? (15 - (i % 16)) : (i % 16);
-            if((int'(cursor_row) == row) && (int'(cursor_col) == col) && !game_start) begin
-                frame[i] = 24'h15_00_00;
-            end
-            else begin
-                case ({gridh[row][col], gridl[row][col]})
-                    2'b00:   frame[i] = 24'h03_03_03; // white
-                    2'b01:   frame[i] = 24'h00_00_15; // blue
-                    2'b10:   frame[i] = 24'h00_15_00; // red
-                    2'b11:   frame[i] = 24'h15_00_00; // green
-                    default: frame[i] = 24'h00_00_00;
-                endcase
-            end 
-        end
-    end
-    */
 
     logic [7:0] led_idx;
     logic [23:0] pixel_out;
@@ -170,7 +186,6 @@ module tile_growth_simulator(
     ws2812b_driver u_drv (
         .clock,
         .reset_n,
-        //.pixel_matrix(frame),
         .pixel_in(pixel_out),
         .led_idx(led_idx),
         .start(led_start),
@@ -349,8 +364,12 @@ module InGameFSM(
     enum logic [1:0] {FROZEN, STALL, SPREAD, DONE} cur_state, next_state;
 
     logic [31:0] stall_counter;
-    //localparam STALL_MAX = 32'd500_0000; 
-    localparam STALL_MAX = 32'd10; // simulation
+
+    `ifdef SIM
+        localparam STALL_MAX = 32'd10; // simulation
+    `else
+        localparam STALL_MAX = 32'd500_0000; // synthesis
+    `endif
 
     logic [3:0] row, col;
     logic filled;
@@ -550,7 +569,6 @@ endmodule : LFSR16
 module ws2812b_driver #(parameter int CLK_MHZ = 25)(
     input  logic clock,
     input  logic reset_n,
-    //input  logic [255:0][23:0] pixel_matrix,  
     input logic [23:0] pixel_in,
     output logic [7:0] led_idx,
     input  logic start,
@@ -626,9 +644,7 @@ module ws2812b_driver #(parameter int CLK_MHZ = 25)(
                     end
                 end
                 LOAD: begin
-                    //shift_reg <= pixel_matrix[led_idx];
                     shift_reg <= pixel_in;
-                    //cur_bit <= pixel_matrix[led_idx][23];  
                     cur_bit <= pixel_in[23];
                     cnt <= '0;
                 end
