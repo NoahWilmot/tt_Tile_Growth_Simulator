@@ -13,7 +13,7 @@ The Tile Growth Simulator is a two-phase interactive game running on a 16x16 gri
 
 ## How to test
 
-The design can be tested using the included cocotb testbench, which simulates the full pre-game and in-game flow. The testbench runs all three starting configurations: corners with center seeds, a diagonal pair, and a single center seed. For each configuration it places the corresponding colored cells on the grid, presses start, and monitors the simulation by printing the grid state to the console after each spread round. Correctness is verified by visually inspecting the printed grid output and checking that colors spread outward from their starting positions as expected.
+The design can be tested using the included cocotb testbench, which simulates the full pre-game and in-game flow. The testbench runs three unique starting configurations: corners with center seeds, a diagonal pair, and a single center seed. For each configuration it places the corresponding colored cells on the grid, presses start, and monitors the simulation by printing the grid state to the console after each spread round. Correctness is verified by visually inspecting the printed grid output and checking that colors spread outward from their starting positions as expected.
 
 ## External hardware
 
