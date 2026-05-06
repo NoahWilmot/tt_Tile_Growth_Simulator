@@ -12,17 +12,17 @@ Tile Growth Simulator is an interactive cellular simulation displayed on a 16×1
 
 Pre-game:
 
--[Pre-game 16x16 LED Matrix](pregame.jpeg)
+![Pre-game 16x16 LED Matrix](pregame.jpeg)
 
 Early-game:
 
--[Early-game 16x16 LED Matrix](earlygame.jpeg)
+![Early-game 16x16 LED Matrix](earlygame.jpeg)
 
 
 Mid-game:
 
--[Mid-game 16x16 LED Matrix](midgame.jpeg)
+![Mid-game 16x16 LED Matrix](midgame.jpeg)
 
 End-game:
 
--[End-game 16x16 LED Matrix](endgame.jpeg)
+![End-game 16x16 LED Matrix](endgame.jpeg)

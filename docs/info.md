@@ -19,13 +19,14 @@ The design can be tested using the included cocotb testbench, which simulates th
 
 -16x16 LED Matrix (driven by WS2812B protocol)
 
--[16x16 LED Matrix](blank.jpeg)
+![16x16 LED Matrix](blank.jpeg)
 
 -Pushbuttons for inputs
 
 # Project Info 
 
 Frequency Requirement: **25 MHz**
+
 Frame update rate : **2 Hz**
 
 ---
