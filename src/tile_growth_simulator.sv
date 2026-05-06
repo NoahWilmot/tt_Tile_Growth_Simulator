@@ -579,13 +579,15 @@ module ws2812b_driver #(parameter int CLK_MHZ = 25)(
     always_comb begin
         case(cur_state)
             IDLE: begin
-                next_state = start ? LOAD : IDLE;
+                if(start) next_state = LOAD;
+                else next_state = IDLE;
             end
             LOAD: begin
                 next_state = SEND_HIGH;
             end
             SEND_HIGH: begin
-                next_state = (cnt == CNT_WIDTH'(cur_bit ? T1H-1 : T0H-1)) ? SEND_LOW : SEND_HIGH;    
+                if(cnt == CNT_WIDTH'(cur_bit ? T1H-1 : T0H-1)) next_state = SEND_LOW;
+                else next_state = SEND_HIGH; 
             end
             SEND_LOW: begin
                 if (cnt == CNT_WIDTH'(cur_bit ? T1L-1 : T0L-1)) begin
@@ -598,7 +600,8 @@ module ws2812b_driver #(parameter int CLK_MHZ = 25)(
                 else next_state = SEND_LOW;
             end
             RESET_PULSE: begin
-                next_state = (cnt == CNT_WIDTH'(TRES - 1)) ? IDLE : RESET_PULSE;
+                if(cnt == CNT_WIDTH'(TRES - 1)) next_state = IDLE;
+                else next_state = RESET_PULSE;
             end
             default: next_state = IDLE;
         endcase
