@@ -349,8 +349,8 @@ module InGameFSM(
     enum logic [1:0] {FROZEN, STALL, SPREAD, DONE} cur_state, next_state;
 
     logic [31:0] stall_counter;
-    localparam STALL_MAX = 32'd500_0000; 
-    //localparam STALL_MAX = 32'd10; // simulation
+    //localparam STALL_MAX = 32'd500_0000; 
+    localparam STALL_MAX = 32'd10; // simulation
 
     logic [3:0] row, col;
     logic filled;
