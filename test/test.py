@@ -29,10 +29,10 @@ def print_grid(dut, description="default grid"):
 #simulates a button press
 async def press(dut, bit):
     await RisingEdge(dut.clk)
-    dut.ui_in.value = dut.ui_in.value | (1 << bit)
+    dut.ui_in.value = int(dut.ui_in.value) | (1 << bit)
     await RisingEdge(dut.clk)
     await RisingEdge(dut.clk)
-    dut.ui_in.value = dut.ui_in.value & ~(1 << bit)
+    dut.ui_in.value = int(dut.ui_in.value) & ~(1 << bit)
     await RisingEdge(dut.clk)
     await RisingEdge(dut.clk)
 
