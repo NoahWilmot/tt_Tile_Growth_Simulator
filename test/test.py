@@ -19,8 +19,8 @@ def print_grid(dut, description="default grid"):
     for r in range(16):
         row_str = f"{r:X}  "
         for c in range(16):
-            gl = int(dut.TGS.gridl[r].value)
-            gh = int(dut.TGS.gridh[r].value)
+            gl = int(dut.user_project.TGS.gridl[r].value)
+            gh = int(dut.user_project.TGS.gridh[r].value)
             tile = ((gh >> c) & 1) << 1 | ((gl >> c) & 1)
             row_str += COLOR_REPS.get(tile) + " "
         print(row_str)
@@ -48,8 +48,8 @@ async def press_start(dut): await press(dut, dut.ui_in[6])
 #moves the cursor to a specified row and column
 async def move_cursor(dut, target_row, target_col):
     for _ in range(32): #safe upper bound
-        cur_row = int(dut.TGS.pg.cursor_row.value)
-        cur_col = int(dut.TGS.pg.cursor_col.value)
+        cur_row = int(dut.user_project.TGS.pg.cursor_row.value)
+        cur_col = int(dut.user_project.TGS.pg.cursor_col.value)
         print(f" cursor: ({cur_row},{cur_col}) -> target: ({target_row},{target_col})")
         if cur_row == target_row and cur_col == target_col:
             break
@@ -82,7 +82,7 @@ async def randomize_seed(dut, repositions=10):
 #places a color at the current position of the cursor
 async def place_color(dut, row, col, color):
     await move_cursor(dut, row, col)
-    cur_color = int(dut.TGS.pg.selected_color.value)
+    cur_color = int(dut.user_project.TGS.pg.selected_color.value)
     if cur_color != color:
         await press_color_sel(dut)
     print(f"...Placing color {COLOR_NAMES.get(color)} at ({row}, {col})")
@@ -98,16 +98,16 @@ async def place_color(dut, row, col, color):
 async def wait_for_spread(dut):
     while True:
         await RisingEdge(dut.clk)
-        if dut.TGS.ig.cur_state.value.is_resolvable:
-            if int(dut.TGS.ig.cur_state.value) == 2:
+        if dut.user_project.TGS.ig.cur_state.value.is_resolvable:
+            if int(dut.user_project.TGS.ig.cur_state.value) == 2:
                 return
 
 #waits for spread state to end
 async def wait_for_spread_to_end(dut):
     while True:
         await RisingEdge(dut.clk)
-        if dut.TGS.ig.cur_state.value.is_resolvable:
-            if int(dut.TGS.ig.cur_state.value) != 2:
+        if dut.user_project.TGS.ig.cur_state.value.is_resolvable:
+            if int(dut.user_project.TGS.ig.cur_state.value) != 2:
                 return
 
 SLEEP_TIME = .1
@@ -119,8 +119,8 @@ async def monitor_game(dut, frameout=1000):
         await wait_for_spread(dut)
         await wait_for_spread_to_end(dut)
         frame += 1
-        count = int(dut.TGS.ig.count.value)
-        done  = (int(dut.TGS.ig.cur_state.value) == 3)  # DONE state = 2'b11 = 3
+        count = int(dut.user_project.TGS.ig.count.value)
+        done  = (int(dut.user_project.TGS.ig.cur_state.value) == 3)  # DONE state = 2'b11 = 3
         print_grid(dut, description=f"Frame: {frame}, Color A count: {count}")
         time.sleep(SLEEP_TIME)
         if done:
