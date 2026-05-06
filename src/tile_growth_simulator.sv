@@ -4,7 +4,7 @@ module tile_growth_simulator(
     input logic clock, reset_n,
     input logic up, down, left, right,
     input logic color_sel, place, start,
-    output logic data,
+    output logic data
 );
 
     //count of color 1
