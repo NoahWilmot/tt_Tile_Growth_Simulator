@@ -18,6 +18,9 @@ The design can be tested using the included cocotb testbench, which simulates th
 ## External hardware
 
 -16x16 LED Matrix (driven by WS2812B protocol)
+
+-[16x16 LED Matrix](blank.jpeg)
+
 -Pushbuttons for inputs
 
 # Project Info 
